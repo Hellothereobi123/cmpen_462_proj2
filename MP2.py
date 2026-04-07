@@ -61,13 +61,15 @@ def generate_unit_vector (num_AP, ap_relative_list):
         unit_vector_list.append(unit_vector) # add to list of unit vectors 
     return unit_vector_list 
 
-def doppler_const_multiplier (f0, unit_vector_list):
+def doppler_const_multiplier (f0, num_AP, unit_vector_list):
     c=3e8
     d_const= f0/c
     # calculates the const for doppler since the equation is dopper_shift= (f0/c)*(v*r)
-    # we dont use cos(angle) becuase we are dealing with 3d so we use 3d vector r 
-
-    return 
+    # we dont use cos(angle) becuase we are dealing with 3d so we use 3d vector r
+    new_ap_list = []
+    for i in range (num_AP):
+        new_ap_list.append(d_const * unit_vector_list[i])
+    return new_ap_list
 
 def approx_velocity (unit_vector_list, d_mult, ):
     pass
@@ -88,21 +90,24 @@ def approx_velocity (unit_vector_list, d_mult, ):
 #   use least square regression to estimate the velocity 
 #   output the results
 
-freq_array = np.fft.fftfreq(5000000, d=0.000001) # FFT frequency array based on index & converts the freq indexes to hz 
+# variables
+carrier_freq=5.8e9
+sampling_freq = 1000000
+time = 5
+
+freq_array = np.fft.fftfreq(sampling_freq*time, d=(1/sampling_freq)) # FFT frequency array based on index & converts the freq indexes to hz 
 input_data = get_input_data("./input.txt")
 client_location = input_data[0] #tuple with client location, number of APs, and AP locations
 num_APs = input_data[1] #number of APs in the environment
 AP_locations = list(input_data[2:]) #tuple with AP locations then converted to a list for ease of use 
 
-print(client_location)
-print(AP_locations)
-print("\n")
+#freq_list = get_peak_frequency(num_APs, freq_array)
+
 AP_relative_list = calc_relative_loc(num_APs,AP_locations,client_location)
-print(AP_relative_list)
-print("\n")
 unit_vector_list = generate_unit_vector(num_APs,AP_relative_list)
+new_ap_list = doppler_const_multiplier(carrier_freq, num_APs,unit_vector_list)
 print(unit_vector_list)
-print("\n")
+print(new_ap_list)
 
 '''
 get_ap1 = get_AP_data("AP1.txt") #gets the signal data from the AP1.txt file, which contains the signal data received by the reciever from the first access point (AP)
@@ -113,8 +118,6 @@ ap1_mag = np.abs(ap1_freq_data) #calculates the magnitude of the frequency domai
 ap1_peaks_maxval = np.argmax(ap1_mag) #finds the peak index in the frequency domain data. #converts the peaks to a numpy array for easier manipulation
 ap1_doppler_freq = freq_array[ap1_peaks_maxval] #finds the frequency corresponding to the peak index, which is used to calculate the velocity of the reciever relative to the transmitter using the doppler shift formula
 '''
-#freq_list = get_peak_frequency(num_APs, freq_array)
-#print(freq_list)
 
 
 
