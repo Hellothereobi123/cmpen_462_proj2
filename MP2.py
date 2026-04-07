@@ -71,8 +71,12 @@ def doppler_const_multiplier (f0, num_AP, unit_vector_list):
         new_ap_list.append(d_const * unit_vector_list[i])
     return new_ap_list
 
-def approx_velocity (unit_vector_list, d_mult, ):
-    pass
+def approx_velocity (coef_list, freq_list):
+    new_coef_list = np.array(coef_list)
+    new_freq_list = np.array(freq_list)
+    solution, residuals, rank, singular_values = np.linalg.lstsq(new_coef_list, new_freq_list, rcond=None)
+
+    return solution
 
 
 # test 
@@ -101,13 +105,16 @@ client_location = input_data[0] #tuple with client location, number of APs, and 
 num_APs = input_data[1] #number of APs in the environment
 AP_locations = list(input_data[2:]) #tuple with AP locations then converted to a list for ease of use 
 
-#freq_list = get_peak_frequency(num_APs, freq_array)
+freq_list = get_peak_frequency(num_APs, freq_array)
 
 AP_relative_list = calc_relative_loc(num_APs,AP_locations,client_location)
 unit_vector_list = generate_unit_vector(num_APs,AP_relative_list)
-new_ap_list = doppler_const_multiplier(carrier_freq, num_APs,unit_vector_list)
-print(unit_vector_list)
-print(new_ap_list)
+coef_list = doppler_const_multiplier(carrier_freq, num_APs,unit_vector_list)
+
+output = approx_velocity(coef_list, freq_list)
+magnitude = np.linalg.norm(output) # Calculate magnitude
+
+print( f"The 3d velocity is {output} and the speed is {magnitude}")
 
 '''
 get_ap1 = get_AP_data("AP1.txt") #gets the signal data from the AP1.txt file, which contains the signal data received by the reciever from the first access point (AP)
