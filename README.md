@@ -19,12 +19,12 @@ make sure pip is installed, then
 
 
 # In order to to use our program,
-edit the input file according to your specifications 
+edit the input file (that should be in the same folder as the mp2.py code) according to your specifications 
     first line:     input the clients 3d location
     second line:    input the number of access points 
     third line +:   input each access point's 3d location
 
-import the AP files into the ~/cmpen_462_proj2 folder 
+import the AP files into the same folder as the mp2.py folder 
 
 After, on vscode, hit run. ( if you are using CMDline, cd to the program location, then type "python MP2.py" to run" )
 
